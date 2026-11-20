@@ -77,11 +77,11 @@ class LiveTradingEngine(
         _simulationSpeed.value = speed.coerceIn(1, 5)
     }
 
-    fun setSymbol(symbol: MarketSymbol) {
-        if (symbol.code == activeSymbol.code && _candles.value.isNotEmpty()) return
+    fun setSymbol(symbol: MarketSymbol): Boolean {
+        if (symbol.code == activeSymbol.code && _candles.value.isNotEmpty()) return true
         if (_activeTrades.value.isNotEmpty()) {
             addLog("Wait for open trade(s) to settle before switching markets.")
-            return
+            return false
         }
         activeSymbol = symbol
         // Try loading historical candles for this symbol from assets
@@ -128,6 +128,7 @@ class LiveTradingEngine(
 
         addLog("Asset switched to ${symbol.code} (${if (symbol.isOtc) "OTC" else "Market"} - ${(symbol.payoutRate * 100).toInt()}% payout)")
         recomputeIndicators()
+        return true
     }
 
     fun startBot() {
