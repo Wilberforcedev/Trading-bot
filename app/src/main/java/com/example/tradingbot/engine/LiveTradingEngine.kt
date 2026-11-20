@@ -240,7 +240,13 @@ class LiveTradingEngine(
         executeTrade(signal, isAutomated = false)
     }
 
+    @Synchronized
     private fun executeTrade(signal: SignalType, isAutomated: Boolean) {
+        if (_activeTrades.value.isNotEmpty()) {
+            addLog("Wait for the active trade to settle before placing another trade.")
+            return
+        }
+
         val config = repository.botConfig.value
         val stake = _currentStake.value
         val balance = repository.balance.value
