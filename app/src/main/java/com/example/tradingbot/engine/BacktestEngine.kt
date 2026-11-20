@@ -126,6 +126,12 @@ object BacktestEngine {
 
         // Iterate through candles up to len - expirationCandles
         for (i in 35 until (candles.size - expirationCandles)) {
+            // Never simulate an order the remaining bankroll cannot cover.
+            if (!currentStake.isFinite() || currentStake <= 0.0 ||
+                !balance.isFinite() || currentStake > balance) {
+                break
+            }
+
             val subCandles = candles.subList(0, i + 1)
             var signal: SignalType? = null
 
