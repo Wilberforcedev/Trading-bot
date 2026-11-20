@@ -78,6 +78,11 @@ class LiveTradingEngine(
     }
 
     fun setSymbol(symbol: MarketSymbol) {
+        if (symbol.code == activeSymbol.code) return
+        if (_activeTrades.value.isNotEmpty()) {
+            addLog("Wait for open trade(s) to settle before switching markets.")
+            return
+        }
         activeSymbol = symbol
         // Try loading historical candles for this symbol from assets
         val assetName = when {
@@ -291,7 +296,7 @@ class LiveTradingEngine(
 
                 if (isWin) {
                     status = TradeStatus.WON
-                    pnl = trade.stake * activeSymbol.payoutRate
+                    pnl = trade.stake * MarketSymbols.find(trade.symbol).payoutRate
                 } else if (isDraw) {
                     status = TradeStatus.DRAW
                     pnl = 0.0
