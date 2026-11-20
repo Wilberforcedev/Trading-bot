@@ -78,7 +78,7 @@ class LiveTradingEngine(
     }
 
     fun setSymbol(symbol: MarketSymbol) {
-        if (symbol.code == activeSymbol.code) return
+        if (symbol.code == activeSymbol.code && _candles.value.isNotEmpty()) return
         if (_activeTrades.value.isNotEmpty()) {
             addLog("Wait for open trade(s) to settle before switching markets.")
             return
