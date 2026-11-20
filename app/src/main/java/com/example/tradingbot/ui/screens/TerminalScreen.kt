@@ -105,8 +105,9 @@ fun TerminalScreen(viewModel: MainViewModel) {
             AssetSelectorRow(
                 selectedSymbol = currentSymbol,
                 onSymbolSelected = {
-                    viewModel.setSymbol(it)
-                    viewModel.updateConfig(botConfig.copy(selectedSymbol = it.code))
+                    if (viewModel.setSymbol(it)) {
+                        viewModel.updateConfig(botConfig.copy(selectedSymbol = it.code))
+                    }
                 }
             )
         }
